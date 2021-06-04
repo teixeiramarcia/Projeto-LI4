@@ -1,0 +1,60 @@
+@model IEnumerable<eudaci.Models.Pandemic>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Date)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Deaths)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Infected)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Recovered)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Hospitalisations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Country)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Date)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Deaths)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Infected)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Recovered)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hospitalisations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Country.Name)
+            </td>
+            <td>
+                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

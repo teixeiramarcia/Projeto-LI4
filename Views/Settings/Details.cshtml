@@ -1,0 +1,41 @@
+@model eudaci.Models.Settings
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Settings</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Notifications)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Notifications)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Sugestions)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Sugestions)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NotifyVaccination)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NotifyVaccination)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NotifyPandemic)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NotifyPandemic)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Delete" asp-route-id="model.Id">Delete</a>
+</div>
