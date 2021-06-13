@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using eudaci.Data;
 using eudaci.Models;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace eudaci.Controllers
 {
@@ -23,7 +24,10 @@ namespace eudaci.Controllers
         public async Task<IActionResult> Index()
         {
             var user = _context.ApplicationUser
+                .Include(r => r.Country)
                 .First(r => r.Email == User.Identity.Name);
+
+            ViewData["user"] = user;
 
             var settings = await _context.Settings
                 .FirstOrDefaultAsync(m => m.User == user);
@@ -37,8 +41,14 @@ namespace eudaci.Controllers
         }
 
         // GET: Settings/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            ViewData["countries"] = await _context.Country.ToListAsync();
+
+            ViewData["user"] = _context.ApplicationUser
+                .Include(r => r.Country)
+                .First(r => r.Email == User.Identity.Name);
+
             return View();
         }
 
@@ -63,11 +73,36 @@ namespace eudaci.Controllers
             return View(settings);
         }
 
-        // GET: Settings/Edit/5
-        public async Task<IActionResult> Edit()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AssociateCountry(String country)
         {
             var user = _context.ApplicationUser
                 .First(r => r.Email == User.Identity.Name);
+
+            var countryModel = await _context.Country
+                .Where(c => c.Name == country)
+                .FirstAsync();
+
+            user.CountryId = countryModel.Id;
+            user.Country = countryModel;
+
+            _context.Update(user);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: Settings/Edit/5
+        public async Task<IActionResult> Edit()
+        {
+            ViewData["countries"] = await _context.Country.ToListAsync();
+            
+            var user = _context.ApplicationUser
+                .Include(r => r.Country)
+                .First(r => r.Email == User.Identity.Name);
+
+            ViewData["user"] = user;
 
             var settings = await _context.Settings
                 .FirstOrDefaultAsync(m => m.User == user);

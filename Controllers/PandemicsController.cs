@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using eudaci.Data;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace eudaci.Controllers
 {
@@ -18,12 +19,41 @@ namespace eudaci.Controllers
         }
 
         // GET: Pandemics
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime date, String country = "")
         {
-            return View(await _context.Pandemic
+            if (country == null) {
+                country = "";
+            }
+
+            ViewData["country"] = country;
+            ViewData["countries"] = await _context.Country.ToListAsync();
+
+            if (date.Year >= 2000)
+            {
+                ViewData["all"] = false;
+                ViewData["date"] = date;
+
+                ViewData["pandemics"] = await _context.Pandemic
                 .Include(r => r.Country)
-                .ToListAsync()
-            );
+                .Where(p =>
+                    p.Date == date &&
+                    (country == "" || p.Country.Name.Contains(country))
+                )
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+
+                return View();
+            }
+
+            ViewData["all"] = true;
+
+            ViewData["pandemics"] = await _context.Pandemic
+                .Include(r => r.Country)
+                .Where(p => country == "" || p.Country.Name.Contains(country))
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+
+            return View();
         }
 
         // GET: Pandemics/Details/5
@@ -37,7 +67,7 @@ namespace eudaci.Controllers
             var pandemic = await _context.Pandemic
                 .Include(r => r.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-                
+
             if (pandemic == null)
             {
                 return NotFound();

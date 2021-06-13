@@ -14462,6 +14462,11 @@
       "FileKind": "mvc"
     },
     {
+      "FilePath": "/Users/marciateixeira/Desktop/LI4/eudaci/Views/Countries/Details.cshtml",
+      "TargetPath": "Views\\Countries\\Details.cshtml",
+      "FileKind": "mvc"
+    },
+    {
       "FilePath": "/Users/marciateixeira/Desktop/LI4/eudaci/Views/Vaccinations/Index.cshtml",
       "TargetPath": "Views\\Vaccinations\\Index.cshtml",
       "FileKind": "mvc"

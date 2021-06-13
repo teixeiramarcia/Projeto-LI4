@@ -166,6 +166,9 @@ namespace eudaci.Migrations
                         .IsConcurrencyToken()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("CountryId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Email")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -211,6 +214,8 @@ namespace eudaci.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("CountryId");
+
                     b.HasIndex("NormalizedEmail")
                         .HasDatabaseName("EmailIndex");
 
@@ -252,7 +257,7 @@ namespace eudaci.Migrations
                             Id = 1,
                             GeographicLocation = "Southwest",
                             Name = "Portugal",
-                            Population = 10169411
+                            Population = 10196709
                         },
                         new
                         {
@@ -266,7 +271,175 @@ namespace eudaci.Migrations
                             Id = 3,
                             GeographicLocation = "Center",
                             Name = "Germany",
-                            Population = 84030279
+                            Population = 84031009
+                        },
+                        new
+                        {
+                            Id = 4,
+                            GeographicLocation = "Center",
+                            Name = "Austria",
+                            Population = 9053899
+                        },
+                        new
+                        {
+                            Id = 5,
+                            GeographicLocation = "West",
+                            Name = "Belgium",
+                            Population = 11589623
+                        },
+                        new
+                        {
+                            Id = 6,
+                            GeographicLocation = "Southeast",
+                            Name = "Bulgaria",
+                            Population = 6948445
+                        },
+                        new
+                        {
+                            Id = 7,
+                            GeographicLocation = "Northwest",
+                            Name = "Croatia",
+                            Population = 4105267
+                        },
+                        new
+                        {
+                            Id = 8,
+                            GeographicLocation = "East",
+                            Name = "Cyprus",
+                            Population = 1215480
+                        },
+                        new
+                        {
+                            Id = 9,
+                            GeographicLocation = "Center",
+                            Name = "Czechia",
+                            Population = 10727309
+                        },
+                        new
+                        {
+                            Id = 10,
+                            GeographicLocation = "North",
+                            Name = "Denmark",
+                            Population = 5792202
+                        },
+                        new
+                        {
+                            Id = 11,
+                            GeographicLocation = "Northeast",
+                            Name = "Estonia",
+                            Population = 1326535
+                        },
+                        new
+                        {
+                            Id = 12,
+                            GeographicLocation = "North",
+                            Name = "Finland",
+                            Population = 5548661
+                        },
+                        new
+                        {
+                            Id = 13,
+                            GeographicLocation = "West",
+                            Name = "France",
+                            Population = 65406747
+                        },
+                        new
+                        {
+                            Id = 14,
+                            GeographicLocation = "Southeast",
+                            Name = "Greece",
+                            Population = 10423054
+                        },
+                        new
+                        {
+                            Id = 15,
+                            GeographicLocation = "Center",
+                            Name = "Hungary",
+                            Population = 9637630
+                        },
+                        new
+                        {
+                            Id = 16,
+                            GeographicLocation = "Northwest",
+                            Name = "Ireland",
+                            Population = 4937786
+                        },
+                        new
+                        {
+                            Id = 17,
+                            GeographicLocation = "South",
+                            Name = "Italy",
+                            Population = 60379497
+                        },
+                        new
+                        {
+                            Id = 18,
+                            GeographicLocation = "Northwest",
+                            Name = "Latvia",
+                            Population = 1886198
+                        },
+                        new
+                        {
+                            Id = 19,
+                            GeographicLocation = "East",
+                            Name = "Lithuania",
+                            Population = 2722289
+                        },
+                        new
+                        {
+                            Id = 20,
+                            GeographicLocation = "Northwest",
+                            Name = "Luxembourg",
+                            Population = 625978
+                        },
+                        new
+                        {
+                            Id = 21,
+                            GeographicLocation = "South",
+                            Name = "Malta",
+                            Population = 441543
+                        },
+                        new
+                        {
+                            Id = 22,
+                            GeographicLocation = "Northwest",
+                            Name = "Netherlands",
+                            Population = 17169846
+                        },
+                        new
+                        {
+                            Id = 23,
+                            GeographicLocation = "Center",
+                            Name = "Poland",
+                            Population = 37846611
+                        },
+                        new
+                        {
+                            Id = 24,
+                            GeographicLocation = "Southeast",
+                            Name = "Romania",
+                            Population = 19237691
+                        },
+                        new
+                        {
+                            Id = 25,
+                            GeographicLocation = "Center",
+                            Name = "Slovakia",
+                            Population = 5462090
+                        },
+                        new
+                        {
+                            Id = 26,
+                            GeographicLocation = "Center",
+                            Name = "Slovenia",
+                            Population = 2079202
+                        },
+                        new
+                        {
+                            Id = 27,
+                            GeographicLocation = "North",
+                            Name = "Sweden",
+                            Population = 10099265
                         });
                 });
 
@@ -405,9 +578,15 @@ namespace eudaci.Migrations
 
             modelBuilder.Entity("eudaci.Models.ApplicationUser", b =>
                 {
+                    b.HasOne("eudaci.Models.Country", "Country")
+                        .WithMany("users")
+                        .HasForeignKey("CountryId");
+
                     b.HasOne("eudaci.Models.Settings", "Settings")
                         .WithOne("User")
                         .HasForeignKey("eudaci.Models.ApplicationUser", "SettingsId");
+
+                    b.Navigation("Country");
 
                     b.Navigation("Settings");
                 });
@@ -437,6 +616,8 @@ namespace eudaci.Migrations
             modelBuilder.Entity("eudaci.Models.Country", b =>
                 {
                     b.Navigation("Pandemics");
+
+                    b.Navigation("users");
 
                     b.Navigation("Vaccinations");
                 });

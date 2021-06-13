@@ -2,11 +2,55 @@
 
 @{
     ViewData["Title"] = "Index";
+    var vaccinations = (IEnumerable<eudaci.Models.Vaccination>)ViewData["vaccinations"];
+    var countries = (IEnumerable<eudaci.Models.Country>)ViewData["countries"];
+
+    String date;
+
+    if ((bool)ViewData["all"])
+    {
+        date = "All time";
+    }
+    else
+    {
+        var datetime = (DateTime)@ViewData["date"];
+        date = ((DateTime)@ViewData["date"]).ToShortDateString();
+    }
 }
 
-<h1>Index</h1>
+<h1 class="pb-2">Index - @date</h1>
 
-<table class="table">
+<form class="form-inline pb-5" method="GET">
+    <select class="custom-select mb-2 mr-sm-2" name="country">
+        <option selected value="">Choose...</option>
+
+        @foreach (var item in countries)
+        {
+            @if ((string)ViewData["country"] == @item.Name)
+            {
+                <option selected value="@item.Name">@item.Name</option>
+            }
+            else
+            {
+                <option value="@item.Name">@item.Name</option>
+            }
+        }
+    </select>
+
+    <input type="text" name="date" value="@date" class="form-control mb-2 mr-sm-2 date-container">
+
+    <button type="submit" class="btn btn-primary mb-2">Submit</button>
+</form>
+
+@if (vaccinations.Count() == 0)
+{
+    <div class="alert alert-primary" role="alert">
+    No vaccinations data for @date
+</div>
+}
+else
+{
+    <table class="table">
     <thead>
         <tr>
             <th>
@@ -25,24 +69,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Date)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuantityFirstDose)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.QuantitySecondDose)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Country.Name)
-            </td>
-            <td>
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-            </td>
-        </tr>
+        @foreach (var item in vaccinations)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Date)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QuantityFirstDose)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.QuantitySecondDose)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Country.Name)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id">Details</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
-    </tbody>
-</table>
+
+<script>
+    $('.date-container').datepicker({ clearBtn: true });
+</script>

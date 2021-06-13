@@ -8,7 +8,7 @@ namespace eudaci
     public class Program
     {
         public static void Main(string[] args)
-        {   
+        {
             CreateHostBuilder(args).Build().Run();
         }
 
@@ -20,19 +20,27 @@ namespace eudaci
                 })
                 .ConfigureServices((hostContext, services) =>
                 {
-                    services.AddQuartz(q =>  
+                    services.AddQuartz(q =>
                     {
                         q.UseMicrosoftDependencyInjectionScopedJobFactory();
 
-                        var jobKey = new JobKey("FetchPTDataJob");
+                        var jobKey = new JobKey("FetchDataJob");
+                        var notKey = new JobKey("NotificationsJob");
 
                         // Register the job with the DI container
-                        q.AddJob<FetchPTDataJob>(opts => opts.WithIdentity(jobKey));
+                        q.AddJob<FetchDataJob>(opts => opts.WithIdentity(jobKey));
+                        q.AddJob<NotificationsJob>(opts => opts.WithIdentity(notKey));
 
                         // Create a trigger for the job
                         q.AddTrigger(opts => opts
                             .ForJob(jobKey)
-                            .WithIdentity("FetchPTDataJob")
+                            .WithIdentity("FetchDataJob")
+                            .WithCronSchedule("0 0 2 * * ?")); // every day at 02:00:00
+                            //.WithCronSchedule("0/30 * * * * ?")); // every minute at second 0 and 30
+                        
+                        q.AddTrigger(opts => opts
+                            .ForJob(notKey)
+                            .WithIdentity("NotificationsJob")
                             .WithCronSchedule("0/30 * * * * ?"));
                     });
 

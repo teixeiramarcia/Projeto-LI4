@@ -2,11 +2,41 @@
 
 @{
     ViewData["Title"] = "Edit";
+
+    var countries = (IEnumerable<eudaci.Models.Country>)ViewData["countries"];
+    var user = (eudaci.Models.ApplicationUser)ViewData["user"];
 }
 
 <h1>Edit</h1>
 
-<h4>Settings</h4>
+<h4 class="mt-4">Country</h4>
+<hr />
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AssociateCountry">
+            <select class="custom-select mb-2 mr-sm-2" name="country">
+                <option value="">Choose...</option>
+
+                @foreach (var item in countries)
+                {
+                    @if (user.Country.Name == @item.Name)
+                    {
+                        <option selected value="@item.Name">@item.Name</option>
+                    }
+                    else
+                    {
+                        <option value="@item.Name">@item.Name</option>
+                    }
+                }
+            </select>
+
+            <button type="submit" class="btn btn-primary mb-2">Submit</button>
+        </form>
+    </div>
+</div>
+
+<h4 class="mt-4">Settings</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">

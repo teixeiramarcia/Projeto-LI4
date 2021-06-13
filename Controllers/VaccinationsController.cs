@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using eudaci.Data;
 using Microsoft.AspNetCore.Authorization;
+using System;
 
 namespace eudaci.Controllers
 {
@@ -18,12 +19,42 @@ namespace eudaci.Controllers
         }
 
         // GET: Vaccinations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(DateTime date, String country = "")
         {
-            return View(await _context.Vaccination
+            if (country == null)
+            {
+                country = "";
+            }
+
+            ViewData["country"] = country;
+            ViewData["countries"] = await _context.Country.ToListAsync();
+
+            if (date.Year >= 2000)
+            {
+                ViewData["all"] = false;
+                ViewData["date"] = date;
+
+                ViewData["vaccinations"] = await _context.Vaccination
                 .Include(r => r.Country)
-                .ToListAsync()
-            );
+                .Where(p =>
+                    p.Date == date &&
+                    (country == "" || p.Country.Name.Contains(country))
+                )
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+
+                return View();
+            }
+
+            ViewData["all"] = true;
+
+            ViewData["vaccinations"] = await _context.Vaccination
+                .Include(r => r.Country)
+                .Where(p => country == "" || p.Country.Name.Contains(country))
+                .OrderByDescending(p => p.Date)
+                .ToListAsync();
+
+            return View();
         }
 
         // GET: Vaccinations/Details/5
@@ -37,7 +68,7 @@ namespace eudaci.Controllers
             var vaccination = await _context.Vaccination
                 .Include(r => r.Country)
                 .FirstOrDefaultAsync(m => m.Id == id);
-                
+
             if (vaccination == null)
             {
                 return NotFound();

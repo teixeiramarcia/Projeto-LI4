@@ -1,0 +1,211 @@
+@{
+    var country = (eudaci.Models.Country)ViewData["country"];
+    var vaccination = (eudaci.Models.Vaccination)ViewData["vaccination"];
+    var pandemic = (eudaci.Models.Pandemic)ViewData["pandemic"];
+    var pandemics = (IEnumerable<eudaci.Models.Pandemic>)ViewData["pandemics"];
+
+    var no_vaccins = country.Population - vaccination.QuantityFirstDose - vaccination.QuantitySecondDose;
+
+    var dates = string.Join(",", pandemics.Select(x => x.Date.ToShortDateString()).ToList());
+
+    var infected = string.Join(",", pandemics.Select(x => x.Infected).ToList());
+    var deaths = string.Join(",", pandemics.Select(x => x.Deaths).ToList());
+    var recovered = string.Join(",", pandemics.Select(x => x.Recovered).ToList());
+
+    ViewData["Title"] = country.Name;
+}
+
+<div class="container">
+    <section id="our-stats">
+        <div class="row mb-5">
+            <div class="col text-center">
+                <h2 class="text-green h1 text-center">@country.Name @pandemic.Date.ToShortDateString() Overview</h2>
+            </div>
+        </div>
+        <div class="row text-center">
+            <div class="col">
+                <div class="counter">
+                    <i class="fas fa-virus fa-2x"></i>
+                    <h2 class="timer count-title count-number" data-to="100" data-speed="1500">@pandemic.Infected</h2>
+                    <p class="count-text ">Infected</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="counter">
+                    <i class="fa fa-laugh-beam fa-2x"></i>
+                    <h2 class="timer count-title count-number" data-to="1700" data-speed="1500">@pandemic.Recovered</h2>
+                    <p class="count-text ">Recovered</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="counter">
+                    <i class="fa fa-skull-crossbones fa-2x"></i>
+                    <h2 class="timer count-title count-number" data-to="11900" data-speed="1500">@pandemic.Deaths</h2>
+                    <p class="count-text ">Deaths</p>
+                </div>
+            </div>
+            <div class="col">
+                <div class="counter">
+                    <i class="fa fa-hospital fa-2x"></i>
+                    <h2 class="timer count-title count-number" data-to="157" data-speed="1500">
+                        @pandemic.Hospitalisations</h2>
+                    <p class="count-text ">Hospitalisations</p>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<canvas id="lineChart"></canvas>
+
+<div class="container pt-5">
+    <div class="row">
+        <div class="col-sm">
+            <canvas id="panChart"></canvas>
+        </div>
+        <div class="col-sm">
+            <canvas id="deathChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="container pt-5">
+    <div class="row">
+        <div class="col">
+        </div>
+        <div class="col">
+            <canvas id="vaccChart"></canvas>
+        </div>
+        <div class="col">
+        </div>
+    </div>
+</div>
+
+<script>
+    line();
+    death();
+    pandemic();
+    vaccination();
+
+    function vaccination() {
+        const labels = ["Fully Vaccinated", "Vaccinated", "Other"];
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    data: [
+                        "@vaccination.QuantitySecondDose",
+                        "@vaccination.QuantityFirstDose",
+                        "@no_vaccins"
+                    ],
+                    backgroundColor: [
+                        'rgb(75, 192, 192, 0.35)',
+                        'rgb(54, 162, 235, 0.35)',
+                        'rgb(255, 99, 132, 0.35)'
+                    ]
+                }
+            ]
+        };
+
+        const config = {
+            type: 'doughnut',
+            data: data,
+            options: {},
+        };
+
+        var myChart = new Chart(
+            document.getElementById('vaccChart'),
+            config
+        );
+    }
+
+    function line() {
+        const labels = "@dates".split(',');
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Confirmed Cases',
+                    backgroundColor: 'rgb(254, 142, 22, 0.25)',
+                    borderColor: 'rgb(254, 142, 22)',
+                    data: "@infected".split(','),
+                    fill: true
+                }
+            ]
+        };
+        const config = {
+            type: 'line',
+            data,
+            options: {}
+        };
+
+        var myChart = new Chart(
+            document.getElementById('lineChart'),
+            config
+        );
+    }
+
+    function death() {
+        const labels = "@dates".split(',');
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Deaths',
+                    data: "@deaths".split(','),
+                    fill: true,
+                    backgroundColor: 'rgb(255, 0, 0, 0.25)',
+                    borderColor: 'rgb(255, 0, 0)',
+                }
+            ]
+        };
+        const config = {
+            type: 'line',
+            data,
+            options: {}
+        };
+
+        var myChart = new Chart(
+            document.getElementById('deathChart'),
+            config
+        );
+    }
+
+    function pandemic() {
+        const labels = "@dates".split(',');
+
+        const data = {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Infected',
+                    data: "@infected".split(','),
+                    fill: true,
+                    backgroundColor: 'rgb(255, 177, 193, 0.5)',
+                    borderColor: 'rgb(255, 177, 193)',
+                },
+                {
+                    label: 'Recovered',
+                    data: "@recovered".split(','),
+                    fill: true,
+                    backgroundColor: 'rgb(154, 208, 245, 0.5)',
+                    borderColor: 'rgb(154, 208, 245)',
+                }
+            ]
+        };
+
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {},
+        };
+
+        var myChart = new Chart(
+            document.getElementById('panChart'),
+            config
+        );
+    }
+</script>

@@ -2,12 +2,24 @@
 
 @{
     ViewData["Title"] = "Details";
+
+    var user = (eudaci.Models.ApplicationUser)ViewData["user"];
 }
 
 <h1>Details</h1>
 
 <div>
-    <h4>Settings</h4>
+    <h4 class="mt-4">Country</h4>
+    <hr />
+    <dl class="row">
+        <dd class = "col-sm-10">
+            @user.Country.Name
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4 class="mt-4">Settings</h4>
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -37,5 +49,6 @@
     </dl>
 </div>
 <div>
+    <a asp-action="Edit" asp-route-id="model.Id">Edit</a> |
     <a asp-action="Delete" asp-route-id="model.Id">Delete</a>
 </div>

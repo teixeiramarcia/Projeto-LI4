@@ -15,5 +15,7 @@ namespace eudaci.Models
         public List<Vaccination> Vaccinations { get; set; }
 
         public List<Pandemic> Pandemics { get; set; }
+
+        public List<ApplicationUser> users { get; set; }
     }
 }
