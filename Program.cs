@@ -35,8 +35,8 @@ namespace eudaci
                         q.AddTrigger(opts => opts
                             .ForJob(jobKey)
                             .WithIdentity("FetchDataJob")
-                            .WithCronSchedule("0 0 2 * * ?")); // every day at 02:00:00
-                            //.WithCronSchedule("0/30 * * * * ?")); // every minute at second 0 and 30
+                            //.WithCronSchedule("0 0 2 * * ?")); // every day at 02:00:00
+                            .WithCronSchedule("0/30 * * * * ?")); // every minute at second 0 and 30
                         
                         q.AddTrigger(opts => opts
                             .ForJob(notKey)

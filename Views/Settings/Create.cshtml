@@ -20,7 +20,7 @@
 
                 @foreach (var item in countries)
                 {
-                    @if (user.Country.Name == @item.Name)
+                    @if (user.Country != null && user.Country.Name == @item.Name)
                     {
                         <option selected value="@item.Name">@item.Name</option>
                     }
